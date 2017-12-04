@@ -15,9 +15,9 @@ import os
 
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
 cascade = "haarcascade_frontalface_alt.xml"
-cropping_path = "/home/experimentality/Documents/Inteligencia/final_inteligencia/Cropped/"
-original = "/home/experimentality/Documents/Inteligencia/final_inteligencia/Original/"
-validator = "/home/experimentality/Documents/Inteligencia/final_inteligencia/Validation/"
+cropping_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Cropped/"
+original = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Original/"
+validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
 camera = cv2.VideoCapture(0)
 
 face = cv2.CascadeClassifier(cascade_path + cascade)

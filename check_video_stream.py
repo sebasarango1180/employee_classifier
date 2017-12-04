@@ -1,6 +1,9 @@
 import cv2
 
-camera = cv2.VideoCapture("rtsp://admin:admin@172.16.1.246:554")
+camera = cv2.VideoCapture("rtsp://admin:admin@172.16.1.254:554")
+#Rango: 244 - 254
+#IP escalas: 252
+#IP corredor: 251
 
 while True:
     ret, img = camera.read()
@@ -11,3 +14,5 @@ while True:
         break
 
 cv2.destroyWindow("Check")
+
+#Idea: desde web escoger cuarto, y variar con esto simplemente la IP del endpoint.

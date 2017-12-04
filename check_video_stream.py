@@ -1,9 +1,9 @@
 import cv2
 
-camera = cv2.VideoCapture("rtsp://admin:admin@172.16.1.254:554")
+camera = cv2.VideoCapture("rtsp://admin:admin@172.16.1.248:554")
 #Rango: 244 - 254
 #IP escalas: 252
-#IP corredor: 251
+#IP corredor: 248
 
 while True:
     ret, img = camera.read()

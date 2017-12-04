@@ -18,7 +18,9 @@ cascade = "haarcascade_frontalface_alt.xml"
 cropping_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Cropped/"
 original = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Original/"
 validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
-camera = cv2.VideoCapture(0)
+
+#camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture("rtsp://172.16.1.246:554/out.h264")
 
 face = cv2.CascadeClassifier(cascade_path + cascade)
 

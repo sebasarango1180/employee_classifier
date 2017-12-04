@@ -10,4 +10,4 @@ while True:
     if cv2.waitKey(5) != -1:
         break
 
-cv2.destroyWindow("Allowance")
+cv2.destroyWindow("Check")

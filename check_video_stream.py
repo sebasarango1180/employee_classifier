@@ -1,6 +1,6 @@
 import cv2
 
-camera = cv2.VideoCapture("rtsp://172.16.1.246:554/out.h264")
+camera = cv2.VideoCapture("rtsp://admin:admin@172.16.1.246:554")
 
 while True:
     ret, img = camera.read()

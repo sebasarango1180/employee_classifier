@@ -20,7 +20,7 @@ original = "/home/experimentality/Documents/Degree work/Software/employee_classi
 validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
 
 #camera = cv2.VideoCapture(0)
-camera = cv2.VideoCapture("rtsp://172.16.1.246:554/out.h264")
+camera = cv2.VideoCapture("rtsp://172.16.1.246:554/")
 
 face = cv2.CascadeClassifier(cascade_path + cascade)
 

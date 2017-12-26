@@ -13,6 +13,15 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.externals import joblib
 
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Flatten
+from keras.layers.convolutional import Conv2D
+from keras.layers.convolutional import MaxPooling2D
+from keras import backend as K
+K.set_image_dim_ordering('th')
+
 
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
 cascade = "haarcascade_frontalface_alt.xml"
@@ -131,6 +140,30 @@ def mlp_model(trainData_pca, trainLabels, testData_pca, testLabels):
     return mlp
 
 
+def cnn_model(trainData_pca, trainLabels, testData_pca, testLabels):
+    # create model
+    model = Sequential()
+    model.add(Conv2D(30, (5, 5), input_shape=(1, 28, 28), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(15, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.2))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(50, activation='relu'))
+    model.add(Dense(2, activation='softmax'))  # 2 classes.
+    # Compile model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    # Fit the model
+    model.fit(trainData_pca, trainLabels, validation_data=(testData_pca, testLabels), epochs=1, batch_size=200)
+    # Final evaluation of the model
+    scores = model.evaluate(testData_pca, testLabels, verbose=0)
+    print("CNN Error: %.2f%%" % (100-scores[1]*100))
+
+    return model
+
+
 def load_model(modelname):
 
     return joblib.load(modelname)
@@ -210,28 +243,10 @@ def train_system(model_opt):
     (data, labels) = pre_processing(data, labels)
     (trainData, testData, trainLabels, testLabels) = split_data(data, labels)
     (trainData_pca, testData_pca) = feature_extract(trainData, testData, comps=0.85)
-    if model_opt == '1':
+    if model_opt == 1:
         mod = mlp_model(trainData_pca, trainLabels, testData_pca, testLabels)
-    elif model_opt == '2':
+    else:
         mod = cnn_model(trainData_pca, trainLabels, testData_pca, testLabels)
 
-    joblib.dump(mod, 'mlp.model')
+    joblib.dump(mod, model_opt + '.model')
 
-
-'''
-def cnn_model():
-    # create model
-    model = Sequential()
-    model.add(Conv2D(30, (5, 5), input_shape=(1, 28, 28), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(15, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(50, activation='relu'))
-    model.add(Dense(num_classes, activation='softmax'))
-    # Compile model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    return model
-'''

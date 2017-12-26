@@ -12,6 +12,7 @@ from sklearn.metrics import classification_report
 
 import cv2
 import os
+import functions as f
 
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
 cascade = "haarcascade_frontalface_alt.xml"
@@ -38,7 +39,23 @@ def image_to_feature_vector(image):
     # a list of raw pixel intensities
     return np.array(image).flatten()
 
-
+'''
+def larger_model():
+    # create model
+    model = Sequential()
+    model.add(Conv2D(30, (5, 5), input_shape=(1, 28, 28), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(15, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.2))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(50, activation='relu'))
+    model.add(Dense(num_classes, activation='softmax'))
+    # Compile model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
+'''
 ###########################################################
 
 # initialize the data matrix and labels list
@@ -137,7 +154,7 @@ print("------------------------------------------------------")
 while True:
     ret, img = camera.read()
 
-    #img = cv2.imread("/home/experimentality/Documents/Inteligencia/final_inteligencia/Validation/grito2_alejo.jpg")
+    # img = cv2.imread("/home/experimentality/Documents/Inteligencia/final_inteligencia/Validation/grito2_alejo.jpg")
 
     det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
     if len(det):
@@ -147,7 +164,7 @@ while True:
             for x, y, w, h in det[-1:]: #Just in case I'm interested on showing the rectangle.
                 imgn = img[y:y+h, x:x+w]
                 imgn = cv2.resize(imgn, (120, 120))
-                imgn = cv2.cvtColor(imgn,cv2.COLOR_BGR2HSV) #Convierto a HSV
+                imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV) #Convierto a HSV
 
                 imgn_fv = image_to_feature_vector(imgn)
                 print("Dimensiones de vector de caracteristicas:")

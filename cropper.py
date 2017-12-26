@@ -22,7 +22,7 @@ validator = "/home/experimentality/Documents/Degree work/Software/employee_class
 
 face = cv2.CascadeClassifier(cascade_path + cascade)
 
-cam_1 = cv2.VideoCapture("rtsp://admin:admin@172.16.1.50:554")
+cam_1 = cv2.VideoCapture("rtsp://admin:admin@172.16.1.251:554")
 
 settings = {
     'scaleFactor': 1.5,

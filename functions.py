@@ -30,7 +30,7 @@ original = "/home/experimentality/Documents/Degree work/Software/employee_classi
 validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
 
 
-camera = cv2.VideoCapture("rtsp://172.16.1.246:554/")
+#camera = cv2.VideoCapture("rtsp://172.16.1.246:554/")
 face = cv2.CascadeClassifier(cascade_path + cascade)
 
 settings = {
@@ -40,6 +40,29 @@ settings = {
     'flags': cv2.CASCADE_FIND_BIGGEST_OBJECT | cv2.CASCADE_DO_ROUGH_SEARCH,  # OpenCV 3
     'minSize': (40, 40)
 }
+
+
+def select_camera(cam_id):
+
+    #Rango: 244 - 254
+    #IP escalas: 252
+    #IP conferencias: 253
+    #IP corredor: 248
+    #IP cocina: 250
+    #IP entrada: 251
+    #IP afuera: 244 - 247,
+    #IP corporativo: 249
+    #IP callcenter: 254
+    #IP bodega: 240
+
+    cameras = {'corredor': 'rtsp://admin:admin@172.16.1.248:554',
+               'corporativo': 'rtsp://admin:admin@172.16.1.249:554',
+               'escalas': 'rtsp://admin:admin@172.16.1.252:554'}
+    for key in cameras:
+        if key == cam_id:
+            return cameras[key]
+        else:
+            return 'rtsp://admin:admin@172.16.1.248:554'
 
 
 def crop_face(face, box, n):
@@ -73,7 +96,7 @@ def pre_processing(data, labels):
     min_max_scaler = preprocessing.MinMaxScaler()
     data = min_max_scaler.fit_transform(data)
 
-    return data, labels
+    return data, labels, min_max_scaler
 
 
 def split_data(data, labels):
@@ -95,7 +118,7 @@ def feature_extract(trainData, testData, comps):
     trainData_pca = pca.transform(trainData)
     testData_pca = pca.transform(testData)
 
-    return trainData_pca, testData_pca
+    return trainData_pca, testData_pca, pca
 
 
 def mlp_model(trainData_pca, trainLabels, testData_pca, testLabels):
@@ -169,9 +192,8 @@ def load_model(modelname):
     return joblib.load(modelname)
 
 
-def run_system(min_max_scaler, pca):  # Pass models as arguments.
+def run_system(min_max_scaler, pca, model, camera):  # Pass models as arguments.
 
-    mlp = load_model('mlp.model')
     ret, img = camera.read()
 
     det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
@@ -196,7 +218,7 @@ def run_system(min_max_scaler, pca):  # Pass models as arguments.
                 imgn_pca = pca.transform(imgn_ft)
                 print("Dimensiones de PCA a entrada:")
                 print(np.shape(imgn_pca))
-                y_new = mlp.predict(imgn_pca)
+                y_new = model.predict(imgn_pca)
                 print("Clasificacion a entrante:")
                 print(y_new)
 
@@ -240,13 +262,15 @@ def train_system(model_opt):
     print("Dimensiones de vector de etiquetas:")
     print(np.shape(labels))
 
-    (data, labels) = pre_processing(data, labels)
+    (data, labels, min_max_scaler) = pre_processing(data, labels)
     (trainData, testData, trainLabels, testLabels) = split_data(data, labels)
-    (trainData_pca, testData_pca) = feature_extract(trainData, testData, comps=0.85)
-    if model_opt == 1:
+    (trainData_pca, testData_pca, pca) = feature_extract(trainData, testData, comps=0.85)
+    if model_opt == 'mlp':
         mod = mlp_model(trainData_pca, trainLabels, testData_pca, testLabels)
     else:
         mod = cnn_model(trainData_pca, trainLabels, testData_pca, testLabels)
 
     joblib.dump(mod, model_opt + '.model')
+    joblib.dump(pca, model_opt + '.pca')
+    joblib.dump(min_max_scaler, model_opt + '.scaler')
 

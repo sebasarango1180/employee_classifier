@@ -1,7 +1,6 @@
 import cv2
 from datetime import datetime
 import os
-import base64
 
 import numpy as np
 from sklearn import preprocessing

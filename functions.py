@@ -192,51 +192,57 @@ def load_model(modelname):
     return joblib.load(modelname)
 
 
-def run_system(min_max_scaler, pca, model, camera):  # Pass models as arguments.
+def run_system(model_opt, camera):  # Pass models as arguments.
 
-    ret, img = camera.read()
+    running = True
+    scaler = load_model(model_opt + '.scaler')
+    pca = load_model(model_opt + '.pca')
+    model = load_model(model_opt + '.model')
 
-    det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
-    if len(det):
+    while running:
+        ret, img = camera.read()
 
-        n = 1
-        for faces in det:
-            for x, y, w, h in det[-1:]:  # Just in case I'm interested on showing the rectangle.
-                imgn = img[y:y+h, x:x+w]
-                imgn = cv2.resize(imgn, (120, 120))
-                imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV)  # Convert to HSV
+        det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
+        if len(det):
 
-                imgn_fv = image_to_feature_vector(imgn)
-                print("Dimensiones de vector de caracteristicas:")
-                print(np.shape(imgn_fv))
-                imgn_rs = imgn_fv.reshape(1, -1)
-                print("Dimensiones de caracteristicas (reshape):")
-                print(np.shape(imgn_rs))
-                imgn_ft = min_max_scaler.transform(imgn_rs)
-                print("Dimensiones de entrada normalizada:")
-                print(np.shape(imgn_ft))
-                imgn_pca = pca.transform(imgn_ft)
-                print("Dimensiones de PCA a entrada:")
-                print(np.shape(imgn_pca))
-                y_new = model.predict(imgn_pca)
-                print("Clasificacion a entrante:")
-                print(y_new)
+            n = 1
+            for faces in det:
+                for x, y, w, h in det[-1:]:  # Just in case I'm interested on showing the rectangle.
+                    imgn = img[y:y+h, x:x+w]
+                    imgn = cv2.resize(imgn, (120, 120))
+                    imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV)  # Convert to HSV
 
-                del imgn
+                    imgn_fv = image_to_feature_vector(imgn)
+                    print("Dimensiones de vector de caracteristicas:")
+                    print(np.shape(imgn_fv))
+                    imgn_rs = imgn_fv.reshape(1, -1)
+                    print("Dimensiones de caracteristicas (reshape):")
+                    print(np.shape(imgn_rs))
+                    imgn_ft = scaler.transform(imgn_rs)
+                    print("Dimensiones de entrada normalizada:")
+                    print(np.shape(imgn_ft))
+                    imgn_pca = pca.transform(imgn_ft)
+                    print("Dimensiones de PCA a entrada:")
+                    print(np.shape(imgn_pca))
+                    y_new = model.predict(imgn_pca)
+                    print("Clasificacion a entrante:")
+                    print(y_new)
 
-                if y_new[0] == 1:
-                    color_rect = (0, 255, 0)
-                else:
-                    color_rect = (255, 0, 0)
-                del y_new
-                cv2.rectangle(img, (x, y), (x + w, y + h), color_rect, 2)
+                    del imgn
 
-            n += 1
+                    if y_new[0] == 1:
+                        color_rect = (0, 255, 0)
+                    else:
+                        color_rect = (255, 0, 0)
+                    del y_new
+                    cv2.rectangle(img, (x, y), (x + w, y + h), color_rect, 2)
 
-    else:
-        print('No faces found')
+                n += 1
 
-    cv2.imshow('Allowance', img)
+        else:
+            print('No faces found')
+
+        return img
 
 
 def train_system(model_opt):

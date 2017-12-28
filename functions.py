@@ -1,6 +1,7 @@
 import cv2
 from datetime import datetime
 import os
+import base64
 
 import numpy as np
 from sklearn import preprocessing
@@ -279,4 +280,6 @@ def train_system(model_opt):
     joblib.dump(mod, model_opt + '.model')
     joblib.dump(pca, model_opt + '.pca')
     joblib.dump(min_max_scaler, model_opt + '.scaler')
+
+
 

@@ -56,12 +56,15 @@ def select_camera(cam_id):
     #IP callcenter: 254
     #IP bodega: 240
 
+    print("cam_id: {}".format(cam_id))
+
     cameras = {'corredor': 'rtsp://admin:admin@172.16.1.248:554',
                'corporativo': 'rtsp://admin:admin@172.16.1.249:554',
                'escalas': 'rtsp://admin:admin@172.16.1.252:554'}
-    for key in cameras:
+    for key, vals in cameras.items():
+        print(key)
         if key == cam_id:
-            return cameras[key]
+            return vals
         else:
             return 'rtsp://admin:admin@172.16.1.248:554'
 
@@ -204,10 +207,11 @@ def run_system(model_opt, camera):  # Pass models as arguments.
     scaler = load_model(model_opt + '.scaler')
     pca = load_model(model_opt + '.pca')
     model = load_model(model_opt + '.model')
+    print(camera)
 
     camera = cv2.VideoCapture(camera)
 
-    ret, img = camera.read()
+    '''ret, img = camera.read()
 
     det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
     if len(det):
@@ -249,9 +253,10 @@ def run_system(model_opt, camera):  # Pass models as arguments.
     else:
         print('No faces found')
 
-    return img
+    return img'''
 
-    '''while running:
+    while running:
+        print(running)
         ret, img = camera.read()
 
         det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
@@ -294,7 +299,7 @@ def run_system(model_opt, camera):  # Pass models as arguments.
         else:
             print('No faces found')
 
-        return img'''
+        return img
 
 
 def train_system(model_opt):

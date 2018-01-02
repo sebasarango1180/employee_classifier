@@ -11,7 +11,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 model_opt = 'mlp'
-cam = f.select_camera('corredor')
+#cam = f.select_camera('corredor')
 
 '''
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
@@ -49,7 +49,7 @@ def trainer():
     model_opt = model_opt.split("&")[0].split('=')[-1]  # Get the real option from the form.
     print(model_opt)
     f.train_system(model_opt)
-    return render_template("index.html"), model_opt
+    return '', 204
 
 
 @app.route('/run', methods=['POST'])

@@ -26,6 +26,7 @@ K.set_image_dim_ordering('th')
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
 cascade = "haarcascade_frontalface_alt.xml"
 cropping_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Cropped/"
+base_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/"
 original = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Original/"
 validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
 
@@ -126,13 +127,16 @@ def mlp_model(trainData_pca, trainLabels, testData_pca, testLabels):
 
     print("[INFO] Entrenando red neuronal...")
 
-    parameters = {'alpha': [1e-5, 1e-2, 1, 10, 100], 'hidden_layer_sizes': [(5, 3), (3, 2), (7, 3), (8, 4), (10, 4)],
-                  'random_state': [1, 10], 'solver': ('sgd', 'lbfgs')}
-    #(5, 4, 2), (3, 3, 2), (7, 3, 2), (8, 3, 2),
+    '''parameters = {'alpha': [1e-5, 1e-2, 1, 10, 100], 'hidden_layer_sizes': [(5, 3), (3, 2), (7, 3), (8, 4), (10, 4)],
+                  'random_state': [1, 10], 'solver': ('sgd', 'lbfgs')}'''
 
-    #[(5, 4, 2), (3, 3, 2), (7, 3, 2), (8, 3, 2), (10, 6, 3)] [(5, 3), (3, 2), (7, 3), (8, 4), (10, 4)]
-    mlp = MLPClassifier(max_iter=50000)
-    mlp = GridSearchCV(mlp, parameters)  # Find the best classifier based on params.
+    parameters = {'alpha': 1, 'hidden_layer_sizes': (8, 3, 2),
+                  'random_state': 6, 'solver': 'lbfgs'}
+    # (5, 4, 2), (3, 3, 2), (7, 3, 2), (8, 3, 2),
+
+    # [(5, 4, 2), (3, 3, 2), (7, 3, 2), (8, 3, 2), (10, 6, 3)] [(5, 3), (3, 2), (7, 3), (8, 4), (10, 4)]
+    mlp = MLPClassifier(max_iter=5000, **parameters)
+    #mlp = GridSearchCV(mlp, parameters)  # Find the best classifier based on params.
     mlp.fit(trainData_pca, trainLabels)
 
     print("Score de clasificacion (entrenamiento):")
@@ -143,9 +147,9 @@ def mlp_model(trainData_pca, trainLabels, testData_pca, testLabels):
     print(mlp.score(testData_pca, testLabels))
     print("------------------------------------------------------")
 
-    print("Mejor estimador neuronal:")
+    '''print("Mejor estimador neuronal:")
     print(mlp.best_estimator_)
-    print("------------------------------------------------------")
+    print("------------------------------------------------------")'''
 
     y_pred = mlp.predict(testData_pca)  # Predicted.
     print "Predicted labels"
@@ -164,9 +168,11 @@ def mlp_model(trainData_pca, trainLabels, testData_pca, testLabels):
 
 
 def cnn_model(trainData_pca, trainLabels, testData_pca, testLabels):
+    trainData_pca = trainData_pca.reshape(trainData_pca.shape[0], 1, 25, 1).astype('float32')
+    testData_pca = testData_pca.reshape(testData_pca.shape[0], 1, 25, 1).astype('float32')
     # create model
     model = Sequential()
-    model.add(Conv2D(30, (5, 5), input_shape=(1, 28, 28), activation='relu'))
+    model.add(Conv2D(30, (5, 5), input_shape=(1, 25, 1), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Conv2D(15, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -179,7 +185,7 @@ def cnn_model(trainData_pca, trainLabels, testData_pca, testLabels):
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     # Fit the model
-    model.fit(trainData_pca, trainLabels, validation_data=(testData_pca, testLabels), epochs=1, batch_size=200)
+    model.fit(trainData_pca, trainLabels, validation_data=(testData_pca, testLabels), epochs=4, batch_size=200)
     # Final evaluation of the model
     scores = model.evaluate(testData_pca, testLabels, verbose=0)
     print("CNN Error: %.2f%%" % (100-scores[1]*100))
@@ -199,7 +205,53 @@ def run_system(model_opt, camera):  # Pass models as arguments.
     pca = load_model(model_opt + '.pca')
     model = load_model(model_opt + '.model')
 
-    while running:
+    camera = cv2.VideoCapture(camera)
+
+    ret, img = camera.read()
+
+    det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
+    if len(det):
+
+        n = 1
+        for faces in det:
+            for x, y, w, h in det[-1:]:  # Just in case I'm interested on showing the rectangle.
+                imgn = img[y:y+h, x:x+w]
+                imgn = cv2.resize(imgn, (120, 120))
+                imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV)  # Convert to HSV
+
+                imgn_fv = image_to_feature_vector(imgn)
+                print("Dimensiones de vector de caracteristicas:")
+                print(np.shape(imgn_fv))
+                imgn_rs = imgn_fv.reshape(1, -1)
+                print("Dimensiones de caracteristicas (reshape):")
+                print(np.shape(imgn_rs))
+                imgn_ft = scaler.transform(imgn_rs)
+                print("Dimensiones de entrada normalizada:")
+                print(np.shape(imgn_ft))
+                imgn_pca = pca.transform(imgn_ft)
+                print("Dimensiones de PCA a entrada:")
+                print(np.shape(imgn_pca))
+                y_new = model.predict(imgn_pca)
+                print("Clasificacion a entrante:")
+                print(y_new)
+
+                del imgn
+
+                if y_new[0] == 1:
+                    color_rect = (0, 255, 0)
+                else:
+                    color_rect = (255, 0, 0)
+                del y_new
+                cv2.rectangle(img, (x, y), (x + w, y + h), color_rect, 2)
+
+            n += 1
+
+    else:
+        print('No faces found')
+
+    return img
+
+    '''while running:
         ret, img = camera.read()
 
         det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
@@ -242,7 +294,7 @@ def run_system(model_opt, camera):  # Pass models as arguments.
         else:
             print('No faces found')
 
-        return img
+        return img'''
 
 
 def train_system(model_opt):
@@ -251,10 +303,16 @@ def train_system(model_opt):
     data = []
     labels = []
 
-    for imagePath in os.listdir(cropping_path):  # Open cropped pics and turn them into features.
+    for modelFiles in os.listdir(base_path):
+        if os.path.basename(modelFiles).split('.')[-1] == 'model' \
+                or os.path.basename(modelFiles).split('.')[-1] == 'pca' \
+                or os.path.basename(modelFiles).split('.')[-1] == 'scaler':
+            os.remove(modelFiles)
+
+    for imagePath in os.listdir(validator):  # Open cropped pics and turn them into features. (cropping_path)
         # load the image and extract the class label (assuming that our
         # path as the format: /path/to/dataset/{class}.{image_num}.jpg
-        image = cv2.imread(cropping_path + imagePath)
+        image = cv2.imread(validator + imagePath)
         label = imagePath.split(os.path.sep)[-1].split(".")[0]
         # construct a feature vector raw pixel intensities, then update
         # the data matrix and labels list
@@ -263,14 +321,16 @@ def train_system(model_opt):
         labels.append(label)
         print(imagePath + " -> " + str(label))
 
+    print(labels)
     print("Dimensiones de matriz de datos:")
     print(np.shape(data))
     print("Dimensiones de vector de etiquetas:")
     print(np.shape(labels))
 
     (data, labels, min_max_scaler) = pre_processing(data, labels)
+    print(labels)
     (trainData, testData, trainLabels, testLabels) = split_data(data, labels)
-    (trainData_pca, testData_pca, pca) = feature_extract(trainData, testData, comps=0.85)
+    (trainData_pca, testData_pca, pca) = feature_extract(trainData, testData, comps=25)
     if model_opt == 'mlp':
         mod = mlp_model(trainData_pca, trainLabels, testData_pca, testLabels)
     else:

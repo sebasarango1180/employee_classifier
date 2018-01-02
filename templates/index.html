@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>@PC | Employees monitoring system</title>
+    <script type="text/javascript" src="socket.io.js"></script>
+    <script type="text/javascript" src="receiver.js"></script>
+    <script>
+        var socket = io();
+        socket.on('stream',function(image){
+          var img = document.getElementById("liveImg");
+          img.src = image;
+        });
+    </script>
+
+</head>
+<body>
+    <img id="liveImg" width="480" height="360">
+    <form action="run" method="post">
+        <fieldset>
+            <legend>Seleccionar camara</legend>
+            <input type="radio" name="cam" id="corredor" value="corredor" /><label for="corredor">Corredor</label><br />
+            <input type="radio" name="cam" id="corporativo" value="corporativo"  /><label for="corporativo">Corporativo</label><br />
+            <input type="radio" name="cam" id="escalas" value="escalas"  /><label for="escalas">Escalas</label><br />
+            <input type="submit" name="run" value="Cambiar">
+        </fieldset>
+    </form>
+    <form action="train" method="post">
+        <fieldset>
+            <legend>Seleccionar modelo de entrenamiento</legend>
+            <input type="radio" name="model" id="cnn_radio" value="cnn" /><label for="cnn_radio">CNN</label><br />
+            <input type="radio" name="model" id="mlp_radio" value="mlp"  /><label for="mlp_radio">MLP</label><br />
+            <input type="submit" name="train" value="Entrenar">
+        </fieldset>
+    </form>
+</body>
+</html>

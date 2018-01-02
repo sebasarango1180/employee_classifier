@@ -10,7 +10,7 @@ K.set_image_dim_ordering('th')
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-model_opt = 'cnn'
+model_opt = 'mlp'
 cam = f.select_camera('corredor')
 
 '''
@@ -32,8 +32,10 @@ settings = {
     'minSize': (40, 40)
 }
 '''
+
+
 def ws_to_front(pic):
-    socketio.emit('sending_pic', base64.b64encode(pic))
+    socketio.emit('stream', base64.b64encode(pic))
 
 @app.route('/')
 def home():
@@ -41,23 +43,29 @@ def home():
     return render_template("index.html")
 
 
-@app.route('/train')
+@app.route('/train', methods=['POST'])
 def trainer():
+    model_opt = request.get_data()
+    model_opt = model_opt.split("&")[0].split('=')[-1]  # Get the real option from the form.
+    print(model_opt)
     f.train_system(model_opt)
+    return render_template("index.html"), model_opt
 
 
 @app.route('/run', methods=['POST'])
 def runner():
     cam = request.get_data()
+    cam = cam.split("&")[0].split('=')[-1]
     camera = f.select_camera(cam)
     ws_to_front(f.run_system(model_opt, camera))  # Event: sending_pic.
-    return 204
+    return '', 204
 
 
 if __name__ == "__main__":
 
     model_opt = 'cnn'
     cam = f.select_camera('corredor')
+    f.train_system('mlp')
     #decide what port to run the app in
     port = int(os.environ.get('PORT', 5000))
     #run the app locally on the givn port

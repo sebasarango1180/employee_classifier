@@ -61,7 +61,7 @@ def select_camera(cam_id):
     cameras = {'corredor': 'rtsp://admin:admin@172.16.1.248:554',
                'corporativo': 'rtsp://admin:admin@172.16.1.249:554',
                'escalas': 'rtsp://admin:admin@172.16.1.252:554'}
-    for key, vals in cameras.items():
+    for key, vals in cameras.iteritems():
         print(key)
         if key == cam_id:
             return vals
@@ -201,15 +201,23 @@ def load_model(modelname):
     return joblib.load(modelname)
 
 
-def run_system(model_opt, camera):  # Pass models as arguments.
+def get_cam(camera):
 
-    running = True
+    print(camera)
+    camera = cv2.VideoCapture(camera)
+
+    return camera
+
+
+def get_models(model_opt):
     scaler = load_model(model_opt + '.scaler')
     pca = load_model(model_opt + '.pca')
     model = load_model(model_opt + '.model')
-    print(camera)
 
-    camera = cv2.VideoCapture(camera)
+    return scaler, pca, model
+
+
+def run_system(scaler, pca, model, camera):  # Pass models as arguments.
 
     '''ret, img = camera.read()
 
@@ -255,51 +263,49 @@ def run_system(model_opt, camera):  # Pass models as arguments.
 
     return img'''
 
-    while running:
-        print(running)
-        ret, img = camera.read()
+    ret, img = camera.read()
 
-        det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
-        if len(det):
+    det = face.detectMultiScale(img, **settings)  # Returns list of rectangles in the image.
+    if len(det):
 
-            n = 1
-            for faces in det:
-                for x, y, w, h in det[-1:]:  # Just in case I'm interested on showing the rectangle.
-                    imgn = img[y:y+h, x:x+w]
-                    imgn = cv2.resize(imgn, (120, 120))
-                    imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV)  # Convert to HSV
+        n = 1
+        for faces in det:
+            for x, y, w, h in det[-1:]:  # Just in case I'm interested on showing the rectangle.
+                imgn = img[y:y+h, x:x+w]
+                imgn = cv2.resize(imgn, (120, 120))
+                imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV)  # Convert to HSV
 
-                    imgn_fv = image_to_feature_vector(imgn)
-                    print("Dimensiones de vector de caracteristicas:")
-                    print(np.shape(imgn_fv))
-                    imgn_rs = imgn_fv.reshape(1, -1)
-                    print("Dimensiones de caracteristicas (reshape):")
-                    print(np.shape(imgn_rs))
-                    imgn_ft = scaler.transform(imgn_rs)
-                    print("Dimensiones de entrada normalizada:")
-                    print(np.shape(imgn_ft))
-                    imgn_pca = pca.transform(imgn_ft)
-                    print("Dimensiones de PCA a entrada:")
-                    print(np.shape(imgn_pca))
-                    y_new = model.predict(imgn_pca)
-                    print("Clasificacion a entrante:")
-                    print(y_new)
+                imgn_fv = image_to_feature_vector(imgn)
+                print("Dimensiones de vector de caracteristicas:")
+                print(np.shape(imgn_fv))
+                imgn_rs = imgn_fv.reshape(1, -1)
+                print("Dimensiones de caracteristicas (reshape):")
+                print(np.shape(imgn_rs))
+                imgn_ft = scaler.transform(imgn_rs)
+                print("Dimensiones de entrada normalizada:")
+                print(np.shape(imgn_ft))
+                imgn_pca = pca.transform(imgn_ft)
+                print("Dimensiones de PCA a entrada:")
+                print(np.shape(imgn_pca))
+                y_new = model.predict(imgn_pca)
+                print("Clasificacion a entrante:")
+                print(y_new)
 
-                    del imgn
+                del imgn
 
-                    if y_new[0] == 1:
-                        color_rect = (0, 255, 0)
-                    else:
-                        color_rect = (255, 0, 0)
-                    del y_new
-                    cv2.rectangle(img, (x, y), (x + w, y + h), color_rect, 2)
+                if y_new[0] == 1:
+                    color_rect = (0, 255, 0)
+                else:
+                    color_rect = (255, 0, 0)
+                del y_new
+                cv2.rectangle(img, (x, y), (x + w, y + h), color_rect, 2)
 
-                n += 1
+            n += 1
 
-        else:
-            print('No faces found')
+    else:
+        print('No faces found')
 
-        return img
+    return img
 
 
 def train_system(model_opt):

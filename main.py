@@ -57,14 +57,16 @@ def runner():
     cam = request.get_data()
     cam = cam.split("&")[0].split('=')[-1]
     camera = f.select_camera(cam)
-    ws_to_front(f.run_system(model_opt, camera))  # Event: sending_pic.
+    (scaler, pca, model) = f.get_models(model_opt)
+    camera = f.get_cam(camera)
+    for i in range(20):
+        ws_to_front(f.run_system(scaler, pca, model, camera))  # Event: sending_pic.
     return '', 204
 
 
 if __name__ == "__main__":
 
-    model_opt = 'cnn'
-    cam = f.select_camera('corredor')
+    #cam = f.select_camera('corredor')
     f.train_system('mlp')
     #decide what port to run the app in
     port = int(os.environ.get('PORT', 5000))

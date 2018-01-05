@@ -14,13 +14,13 @@
     </script>
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>--->
 
-    <script type="text/javascript" src="../js/socket.io.js"></script>
+    <script type="text/javascript" src='./js/socket.io.js'></script>
     <script type="text/javascript" charset="utf-8">
 
     var img = document.getElementById("liveImg");
     var arrayBuffer;
 
-    /*function encode (input) {
+    function encode (input) {
     var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     var output = "";
     var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
@@ -45,9 +45,9 @@
                   keyStr.charAt(enc3) + keyStr.charAt(enc4);
     }
     return output;
-    }*/
+    }
 
-    var socket = io.connect('http://localhost:5000/run');
+    var socket = io.connect('http://localhost:5000');
     socket.on('stream', function(evt) {
         arrayBuffer = evt.data;
         img.src = "data:image/jpeg;base64," + arrayBuffer;
@@ -60,17 +60,17 @@
     <form action="run" method="post">
         <fieldset>
             <legend>Seleccionar camara</legend>
-            <input type="radio" name="cam" id="corredor" value="corredor" /><label for="corredor">Corredor</label><br />
-            <input type="radio" name="cam" id="corporativo" value="corporativo"  /><label for="corporativo">Corporativo</label><br />
-            <input type="radio" name="cam" id="escalas" value="escalas"  /><label for="escalas">Escalas</label><br />
+            <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
+            <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
+            <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
             <input type="submit" name="run" value="Cambiar">
         </fieldset>
     </form>
     <form action="train" method="post">
         <fieldset>
             <legend>Seleccionar modelo de entrenamiento</legend>
-            <input type="radio" name="model" id="cnn_radio" value="cnn" /><label for="cnn_radio">CNN</label><br />
-            <input type="radio" name="model" id="mlp_radio" value="mlp"  /><label for="mlp_radio">MLP</label><br />
+            <input type="radio" name="model" id="cnn_radio" value="cnn" checked="false" /><label for="cnn_radio">CNN</label><br />
+            <input type="radio" name="model" id="mlp_radio" value="mlp"  checked="false" /><label for="mlp_radio">MLP</label><br />
             <input type="submit" name="train" value="Entrenar">
         </fieldset>
     </form>

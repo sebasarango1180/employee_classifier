@@ -58,15 +58,15 @@ def select_camera(cam_id):
 
     print("cam_id: {}".format(cam_id))
 
-    cameras = {'corredor': 'rtsp://admin:admin@172.16.1.248:554',
-               'corporativo': 'rtsp://admin:admin@172.16.1.249:554',
-               'escalas': 'rtsp://admin:admin@172.16.1.252:554'}
+    cameras = {"corredor": "rtsp://admin:admin@172.16.1.248:554",
+               "corporativo": "rtsp://admin:admin@172.16.1.249:554",
+               "escalas": "rtsp://admin:admin@172.16.1.252:554"}
+
     for key, vals in cameras.iteritems():
         print(key)
         if key == cam_id:
             return vals
-        else:
-            return 'rtsp://admin:admin@172.16.1.248:554'
+    return None
 
 
 def crop_face(face, box, n):

@@ -51,6 +51,7 @@
     socket.on('stream', function(evt) {
         arrayBuffer = evt.data;
         img.src = "data:image/jpeg;base64," + arrayBuffer;
+        console.log("Estoy en stream")
     });
 </script>
 

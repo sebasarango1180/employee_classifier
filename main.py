@@ -36,6 +36,7 @@ settings = {
 
 
 def run_cycle(scaler, pca, model, camera):
+    print "entre al ciclo infinito"
     while True:
         pic = f.run_system(scaler, pca, model, camera)
         if pic is not None:
@@ -44,6 +45,7 @@ def run_cycle(scaler, pca, model, camera):
 
 
 def ws_to_front(pic):
+    print "Enviando img"
     socketio.emit('stream', pic)
 
 
@@ -82,6 +84,7 @@ def runner():
     if os.environ.get('CAM_PID') is not None:
         pid = os.environ.get('CAM_PID')
         sntnc = "kill -9 " + pid
+        print "Matando al " + pid
         os.system(sntnc)
     cam = request.get_data()
     cam = cam.split("&")[0].split('=')[-1]
@@ -92,7 +95,9 @@ def runner():
     p_runner.start()
     print(p_runner.pid)
     os.environ['CAM_PID'] = str(p_runner.pid)
+    exportable = "export CAM_PID=$CAM_PID:" + str(p_runner.pid)
     print(os.environ.get('CAM_PID'))
+    os.system(exportable)
     return '', 204
 
 

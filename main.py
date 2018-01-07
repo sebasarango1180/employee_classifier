@@ -11,8 +11,16 @@ K.set_image_dim_ordering('th')
 app = Flask(__name__, static_url_path='')
 socketio = SocketIO(app)
 
+print "System ON"
+os.system("cp ./sources/logoapc-150x150.png ./sources/cam.png")
+
 model_opt = 'mlp'
-#cam = f.select_camera('corredor')
+(scaler, pca, model) = f.get_models(model_opt)
+
+p_corredor = Process(target=f.run_cycle, args=(scaler, pca, model, f.select_camera('corredor')))
+p_corporativo = Process(target=f.run_cycle, args=(scaler, pca, model, f.select_camera('corporativo')))
+p_escalas = Process(target=f.run_cycle, args=(scaler, pca, model, f.select_camera('escalas')))
+# cam = f.select_camera('corredor')
 
 '''
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
@@ -35,15 +43,6 @@ settings = {
 '''
 
 
-def run_cycle(scaler, pca, model, camera):
-    print "entre al ciclo infinito"
-    while True:
-        pic = f.run_system(scaler, pca, model, camera)
-        if pic is not None:
-            ws_to_front(pic)  # Event: sending_pic.
-            print "0i3 cY"
-
-
 def ws_to_front(pic):
     print "Enviando img"
     socketio.emit('stream', pic)
@@ -62,6 +61,11 @@ def home():
 @app.route('/js/<path:path>')  # To include static files.
 def send_js(path):
     return send_from_directory('js', path)
+
+
+@app.route('/sources/<path:path>')  # To include static files.
+def send_src(path):
+    return send_from_directory('sources', path)
 
 
 @app.route('/train', methods=['POST'])
@@ -88,16 +92,68 @@ def runner():
         os.system(sntnc)
     cam = request.get_data()
     cam = cam.split("&")[0].split('=')[-1]
-    camera = f.select_camera(cam)
+
+    if cam == 'corredor':
+        if p_corporativo.is_alive():
+            p_corporativo.terminate()
+            os.system("kill -9 " + str(p_corporativo.pid))
+            p_corporativo.join()
+
+            #f.release_cam(f.get_cam(f.select_camera('corporativo')))
+        if p_escalas.is_alive():
+            p_escalas.terminate()
+            os.system("kill -9 " + str(p_escalas.pid))
+            p_escalas.join()
+
+            #f.release_cam(f.get_cam(f.select_camera('escalas')))
+
+        p_corredor.start()
+        print(str(p_corredor.pid))
+
+    elif cam == 'corporativo':
+        if p_corredor.is_alive():
+            p_corredor.terminate()
+            os.system("kill -9 " + str(p_corredor.pid))
+            p_corredor.join()
+
+            #f.release_cam(f.get_cam(f.select_camera('corredor')))
+        if p_escalas.is_alive():
+            p_escalas.terminate()
+            os.system("kill -9 " + str(p_escalas.pid))
+            p_escalas.join()
+
+            #f.release_cam(f.get_cam(f.select_camera('escalas')))
+
+        p_corporativo.start()
+        print(str(p_corporativo.pid))
+
+    elif cam == 'escalas':
+        if p_corporativo.is_alive():
+            p_corporativo.terminate()
+            os.system("kill -9 " + str(p_corporativo.pid))
+            p_corporativo.join()
+
+            #f.release_cam(f.get_cam(f.select_camera('corporativo')))
+        if p_corredor.is_alive():
+            p_corredor.terminate()
+            os.system("kill -9 " + str(p_corredor.pid))
+            p_corredor.join()
+
+            #f.release_cam(f.get_cam(f.select_camera('corredor')))
+
+        p_escalas.start()
+        print(str(p_escalas.pid))
+
+    '''camera = f.select_camera(cam)
     (scaler, pca, model) = f.get_models(model_opt)
-    camera = f.get_cam(camera)
-    p_runner = Process(target=run_cycle, args=(scaler, pca, model, camera,))
-    p_runner.start()
-    print(p_runner.pid)
-    os.environ['CAM_PID'] = str(p_runner.pid)
-    exportable = "export CAM_PID=$CAM_PID:" + str(p_runner.pid)
-    print(os.environ.get('CAM_PID'))
-    os.system(exportable)
+    camera_obj = f.get_cam(camera)
+    #p_runner = Process(target=run_cycle, args=(scaler, pca, model, camera_obj,))
+   # p_runner.start()
+    #print(p_runner.pid)
+    #os.environ['CAM_PID'] = str(p_runner.pid)
+    #exportable = "export CAM_PID=$CAM_PID:" + str(p_runner.pid)
+    #print(os.environ.get('CAM_PID'))
+    #os.system(exportable)'''
     return '', 204
 
 

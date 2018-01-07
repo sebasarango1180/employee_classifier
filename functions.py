@@ -58,9 +58,13 @@ def select_camera(cam_id):
 
     print("cam_id: {}".format(cam_id))
 
-    cameras = {"corredor": "rtsp://admin:admin@172.16.1.248:554",
+    '''cameras = {"corredor": "rtsp://admin:admin@172.16.1.248:554",
                "corporativo": "rtsp://admin:admin@172.16.1.249:554",
-               "escalas": "rtsp://admin:admin@172.16.1.252:554"}
+               "escalas": "rtsp://admin:admin@172.16.1.252:554"}'''
+
+    cameras = {"corredor": 0,
+               "corporativo": 1,
+               "escalas": 0}
 
     for key, vals in cameras.iteritems():
         print(key)
@@ -209,12 +213,31 @@ def get_cam(camera):
     return camera
 
 
+def release_cam(camera_obj):
+
+    camera_obj.release()
+
+
 def get_models(model_opt):
     scaler = load_model(model_opt + '.scaler')
     pca = load_model(model_opt + '.pca')
     model = load_model(model_opt + '.model')
 
     return scaler, pca, model
+
+
+def run_cycle(scaler, pca, model, camera_name):
+    print "entre al ciclo infinito"
+    try:
+        cam_obj = get_cam(camera_name)
+        while True:
+            '''pic = f.run_system(scaler, pca, model, camera)
+            if pic is not None:
+            ws_to_front(pic)  # Event: sending_pic.
+            print "0i3 cY"'''
+            run_system(scaler, pca, model, cam_obj)
+    finally:
+        release_cam(cam_obj)
 
 
 def run_system(scaler, pca, model, camera):  # Pass models as arguments.
@@ -305,6 +328,7 @@ def run_system(scaler, pca, model, camera):  # Pass models as arguments.
     else:
         print('No faces found')
 
+    cv2.imwrite("./sources/cam.png", img)
     return img
 
 

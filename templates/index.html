@@ -15,7 +15,8 @@
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>--->
 
     <script type="text/javascript" src='./js/socket.io.js'></script>
-    <script type="text/javascript" charset="utf-8">
+    <script type="text/javascript" src='./js/pictures.js'></script>
+    <!--<script type="text/javascript" charset="utf-8">
 
     var img = document.getElementById("liveImg");
     var arrayBuffer;
@@ -53,11 +54,11 @@
         img.src = "data:image/jpeg;base64," + arrayBuffer;
         console.log("Estoy en stream")
     });
-</script>
+</script>-->
 
 </head>
-<body>
-    <img id="liveImg" width="480" height="360">
+<body onload="JavaScript:timedRefresh(1000);">
+    <canvas id="liveImg" width="140" height="140"></canvas>
     <form action="run" method="post">
         <fieldset>
             <legend>Seleccionar camara</legend>
@@ -69,7 +70,7 @@
     </form>
     <form action="train" method="post">
         <fieldset>
-            <legend>Seleccionar modelo de entrenamiento</legend>
+            <legend>Modelo de entrenamiento</legend>
             <input type="radio" name="model" id="cnn_radio" value="cnn" checked="false" /><label for="cnn_radio">CNN</label><br />
             <input type="radio" name="model" id="mlp_radio" value="mlp"  checked="false" /><label for="mlp_radio">MLP</label><br />
             <input type="submit" name="train" value="Entrenar">

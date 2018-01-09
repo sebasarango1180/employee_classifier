@@ -1,4 +1,4 @@
-var timeoutPeriod = 1000;
+var timeoutPeriod = 50;
 var imageURI = './sources/cam.png';
 var x=0, y=0;
 var img = new Image();

@@ -1,6 +1,8 @@
 import cv2
-from datetime import datetime
+from datetime import *
 import os
+import time
+import base64
 
 import numpy as np
 from sklearn import preprocessing
@@ -67,7 +69,7 @@ def select_camera(cam_id):
                "escalas": 0}
 
     for key, vals in cameras.iteritems():
-        print(key)
+        #print(key)
         if key == cam_id:
             return vals
     return None
@@ -226,18 +228,10 @@ def get_models(model_opt):
     return scaler, pca, model
 
 
-def run_cycle(scaler, pca, model, camera_name):
-    print "entre al ciclo infinito"
-    try:
-        cam_obj = get_cam(camera_name)
-        while True:
-            '''pic = f.run_system(scaler, pca, model, camera)
-            if pic is not None:
-            ws_to_front(pic)  # Event: sending_pic.
-            print "0i3 cY"'''
-            run_system(scaler, pca, model, cam_obj)
-    finally:
-        release_cam(cam_obj)
+def set_image_to_send(pic):
+    pic = cv2.imencode('.png', pic)[1].tostring()
+    pic = base64.b64encode(pic)
+    return pic
 
 
 def run_system(scaler, pca, model, camera):  # Pass models as arguments.
@@ -299,20 +293,20 @@ def run_system(scaler, pca, model, camera):  # Pass models as arguments.
                 imgn = cv2.cvtColor(imgn, cv2.COLOR_BGR2HSV)  # Convert to HSV
 
                 imgn_fv = image_to_feature_vector(imgn)
-                print("Dimensiones de vector de caracteristicas:")
-                print(np.shape(imgn_fv))
+                #print("Dimensiones de vector de caracteristicas:")
+                #print(np.shape(imgn_fv))
                 imgn_rs = imgn_fv.reshape(1, -1)
-                print("Dimensiones de caracteristicas (reshape):")
-                print(np.shape(imgn_rs))
+                #print("Dimensiones de caracteristicas (reshape):")
+                #print(np.shape(imgn_rs))
                 imgn_ft = scaler.transform(imgn_rs)
-                print("Dimensiones de entrada normalizada:")
-                print(np.shape(imgn_ft))
+                #print("Dimensiones de entrada normalizada:")
+                #print(np.shape(imgn_ft))
                 imgn_pca = pca.transform(imgn_ft)
-                print("Dimensiones de PCA a entrada:")
-                print(np.shape(imgn_pca))
+                #print("Dimensiones de PCA a entrada:")
+                #print(np.shape(imgn_pca))
                 y_new = model.predict(imgn_pca)
-                print("Clasificacion a entrante:")
-                print(y_new)
+                #print("Clasificacion a entrante:")
+                #print(y_new)
 
                 del imgn
 
@@ -326,7 +320,8 @@ def run_system(scaler, pca, model, camera):  # Pass models as arguments.
             n += 1
 
     else:
-        print('No faces found')
+        #print('No faces found')
+        pass
 
     cv2.imwrite("./sources/cam.png", img)
     return img

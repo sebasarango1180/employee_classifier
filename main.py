@@ -1,15 +1,19 @@
+#import eventlet
+#eventlet.monkey_patch()
+
 import os
+from datetime import *
 import base64
 import functions as f
 from flask import Flask, render_template, request, send_from_directory
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from multiprocessing import Process
 
 from keras import backend as K
 K.set_image_dim_ordering('th')
 
 app = Flask(__name__, static_url_path='')
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode="gevent_uwsgi")
 
 print "System ON"
 os.system("cp ./sources/logoapc-150x150.png ./sources/cam.png")
@@ -17,10 +21,11 @@ os.system("cp ./sources/logoapc-150x150.png ./sources/cam.png")
 model_opt = 'mlp'
 (scaler, pca, model) = f.get_models(model_opt)
 
-p_corredor = Process(target=f.run_cycle, args=(scaler, pca, model, f.select_camera('corredor')))
-p_corporativo = Process(target=f.run_cycle, args=(scaler, pca, model, f.select_camera('corporativo')))
-p_escalas = Process(target=f.run_cycle, args=(scaler, pca, model, f.select_camera('escalas')))
+cam_obj_now = []
+
+
 # cam = f.select_camera('corredor')
+
 
 '''
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
@@ -44,18 +49,33 @@ settings = {
 
 
 def ws_to_front(pic):
-    print "Enviando img"
+    base64.b64encode(pic)
     socketio.emit('stream', pic)
 
 
-#def ws_to_front(pic):
+def run_cycle(scaler, pca, model, camera_name):
+    print "entre al ciclo infinito"
+    try:
+        cam_obj = f.get_cam(camera_name)
+        lim = datetime.now() + timedelta(minutes=2)
+        while datetime.now() <= lim:
+            pic = f.run_system(scaler, pca, model, cam_obj)
+            img = f.set_image_to_send(pic)
+            ws_to_front(img)
+    finally:
+        print "Liberando camara" + str(camera_name)
+        f.release_cam(cam_obj)
 
+
+'''p_corredor = Process(target= run_cycle, args=(scaler, pca, model, cam_obj_now, f.select_camera('corredor')))
+p_corporativo = Process(target= run_cycle, args=(scaler, pca, model, cam_obj_now, f.select_camera('corporativo')))
+p_escalas = Process(target= run_cycle, args=(scaler, pca, model, cam_obj_now, f.select_camera('escalas')))'''
 
 @app.route('/')
 def home():
 
     # render out pre-built HTML file right on the index page
-    return render_template("index.html")
+    return render_template("index.html", async_mode=socketio.async_mode)
 
 
 @app.route('/js/<path:path>')  # To include static files.
@@ -85,16 +105,34 @@ def trainer():
 @app.route('/run', methods=['POST'])
 def runner():
 
+    '''if p_corporativo.is_alive():
+        p_corporativo.terminate()
+        os.system("kill -9 " + str(p_corporativo.pid))
+        p_corporativo.join()
+
+        #f.release_cam(f.get_cam(f.select_camera('corporativo')))
+    if p_escalas.is_alive():
+        p_escalas.terminate()
+        os.system("kill -9 " + str(p_escalas.pid))
+        p_escalas.join()
+
+    if p_corredor.is_alive():
+        p_corredor.terminate()
+        os.system("kill -9 " + str(p_corredor.pid))
+        p_corredor.join()'''
+
+
     if os.environ.get('CAM_PID') is not None:
         pid = os.environ.get('CAM_PID')
         sntnc = "kill -9 " + pid
         print "Matando al " + pid
         os.system(sntnc)
+
     cam = request.get_data()
     cam = cam.split("&")[0].split('=')[-1]
 
     if cam == 'corredor':
-        if p_corporativo.is_alive():
+        '''if p_corporativo.is_alive():
             p_corporativo.terminate()
             os.system("kill -9 " + str(p_corporativo.pid))
             p_corporativo.join()
@@ -105,13 +143,16 @@ def runner():
             os.system("kill -9 " + str(p_escalas.pid))
             p_escalas.join()
 
-            #f.release_cam(f.get_cam(f.select_camera('escalas')))
+            #f.release_cam(f.get_cam(f.select_camera('escalas')))'''
 
+        p_corredor = Process(target=run_cycle, args=(scaler, pca, model, f.select_camera('corredor')))
         p_corredor.start()
         print(str(p_corredor.pid))
+        os.environ['CAM_PID'] = str(p_corredor.pid)
+        #p_corredor.join()
 
     elif cam == 'corporativo':
-        if p_corredor.is_alive():
+        '''if p_corredor.is_alive():
             p_corredor.terminate()
             os.system("kill -9 " + str(p_corredor.pid))
             p_corredor.join()
@@ -122,13 +163,15 @@ def runner():
             os.system("kill -9 " + str(p_escalas.pid))
             p_escalas.join()
 
-            #f.release_cam(f.get_cam(f.select_camera('escalas')))
-
+            #f.release_cam(f.get_cam(f.select_camera('escalas')))'''
+        p_corporativo = Process(target= run_cycle, args=(scaler, pca, model, f.select_camera('corporativo')))
         p_corporativo.start()
         print(str(p_corporativo.pid))
+        os.environ['CAM_PID'] = str(p_corporativo.pid)
+        #p_corporativo.join()
 
     elif cam == 'escalas':
-        if p_corporativo.is_alive():
+        '''if p_corporativo.is_alive():
             p_corporativo.terminate()
             os.system("kill -9 " + str(p_corporativo.pid))
             p_corporativo.join()
@@ -139,10 +182,12 @@ def runner():
             os.system("kill -9 " + str(p_corredor.pid))
             p_corredor.join()
 
-            #f.release_cam(f.get_cam(f.select_camera('corredor')))
-
+            #f.release_cam(f.get_cam(f.select_camera('corredor')))'''
+        p_escalas = Process(target= run_cycle, args=(scaler, pca, model, f.select_camera('escalas')))
         p_escalas.start()
         print(str(p_escalas.pid))
+        os.environ['CAM_PID'] = str(p_escalas.pid)
+        #p_escalas.join()
 
     '''camera = f.select_camera(cam)
     (scaler, pca, model) = f.get_models(model_opt)
@@ -163,4 +208,5 @@ if __name__ == "__main__":
     # f.train_system('mlp')
 
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=True)
+    socketio.run(app, host='0.0.0.0', port=port)
+    #app.run(host='0.0.0.0', port=port, debug=True)

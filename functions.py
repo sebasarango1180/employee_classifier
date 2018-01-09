@@ -60,13 +60,13 @@ def select_camera(cam_id):
 
     print("cam_id: {}".format(cam_id))
 
-    '''cameras = {"corredor": "rtsp://admin:admin@172.16.1.248:554",
+    cameras = {"corredor": "rtsp://admin:admin@172.16.1.248:554",
                "corporativo": "rtsp://admin:admin@172.16.1.249:554",
-               "escalas": "rtsp://admin:admin@172.16.1.252:554"}'''
+               "escalas": "rtsp://admin:admin@172.16.1.252:554"}
 
-    cameras = {"corredor": 0,
+    '''cameras = {"corredor": 0,
                "corporativo": 1,
-               "escalas": 0}
+               "escalas": 0}'''
 
     for key, vals in cameras.iteritems():
         #print(key)

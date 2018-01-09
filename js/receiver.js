@@ -29,8 +29,14 @@ function encode (input) {
     return output;
     }
 
-socket.on('stream',function(image){
+/*socket.on('stream',function(image){
     arrayBuffer = evt.data;
     img.src = "data:image/png;base64," +  + encode(new Uint8Array(arrayBuffer));
     console.log("Estoy en stream")
+});*/
+
+socket.on('stream',function(image){
+    img.src = image;
+    console.log("Estoy en stream")
 });
+

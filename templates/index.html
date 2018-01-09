@@ -15,9 +15,9 @@
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>--->
 
     <!--<script type="text/javascript" src='./js/socket.io.js'></script>-->
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-    <!--<script type="text/javascript" src='./js/pictures.js'></script>-->
-    <script type="text/javascript" src='./js/receiver.js'></script>
+    <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>-->
+    <script type="text/javascript" src='./js/pictures.js'></script>
+    <!--<script type="text/javascript" src='./js/receiver.js'></script>-->
 
     <!--<script type="text/javascript" charset="utf-8">
 
@@ -60,17 +60,17 @@
 </script>-->
 
 </head>
-<!--<body onload="JavaScript:timedRefresh(50);">-->
-<body>
-    <!--<canvas id="liveImg" width="140" height="140"></canvas>-->
-    <img id="liveImg" src="./sources/logoapc-150x150.png" width="600" height="600">
+<body onload="JavaScript:timedRefresh(50);">
+<!--<body>-->
+    <canvas id="liveImg" width="600" height="400"></canvas>
+    <!--<img id="liveImg" src="" width="600" height="400">-->
     <form action="run" method="post">
         <fieldset>
             <legend>Seleccionar camara</legend>
             <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
             <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
             <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
-            <input type="submit" name="run" value="Cambiar">
+            <input type="submit" onclick="show_frames()" name="run" value="Cambiar">
         </fieldset>
     </form>
     <form action="train" method="post">

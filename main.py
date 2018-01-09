@@ -2,6 +2,7 @@
 #eventlet.monkey_patch()
 
 import os
+import psutil
 from datetime import *
 import base64
 import functions as f
@@ -21,7 +22,7 @@ os.system("cp ./sources/logoapc-150x150.png ./sources/cam.png")
 model_opt = 'mlp'
 (scaler, pca, model) = f.get_models(model_opt)
 
-cam_obj_now = []
+current_pid = [None]
 
 
 # cam = f.select_camera('corredor')
@@ -49,7 +50,7 @@ settings = {
 
 
 def ws_to_front(pic):
-    base64.b64encode(pic)
+    #base64.b64encode(pic)
     socketio.emit('stream', pic)
 
 
@@ -57,13 +58,14 @@ def run_cycle(scaler, pca, model, camera_name):
     print "entre al ciclo infinito"
     try:
         cam_obj = f.get_cam(camera_name)
-        lim = datetime.now() + timedelta(minutes=2)
-        while datetime.now() <= lim:
-            pic = f.run_system(scaler, pca, model, cam_obj)
-            img = f.set_image_to_send(pic)
-            ws_to_front(img)
+        #lim = datetime.now() + timedelta(minutes=2)
+        #while datetime.now() <= lim:
+        while True:
+            f.run_system(scaler, pca, model, cam_obj)
+            #img = f.set_image_to_send(pic)
+            #ws_to_front(pic)
     finally:
-        print "Liberando camara" + str(camera_name)
+        print "Liberando camara: " + str(camera_name)
         f.release_cam(cam_obj)
 
 
@@ -121,12 +123,14 @@ def runner():
         os.system("kill -9 " + str(p_corredor.pid))
         p_corredor.join()'''
 
-
-    if os.environ.get('CAM_PID') is not None:
+    if psutil.pid_exists(current_pid[0]):
+        print "Matando a " + str(current_pid[0])
+        psutil.Process(current_pid[0]).kill()
+    '''if os.environ.get('CAM_PID') is not None:
         pid = os.environ.get('CAM_PID')
         sntnc = "kill -9 " + pid
         print "Matando al " + pid
-        os.system(sntnc)
+        os.system(sntnc)'''
 
     cam = request.get_data()
     cam = cam.split("&")[0].split('=')[-1]
@@ -147,6 +151,7 @@ def runner():
 
         p_corredor = Process(target=run_cycle, args=(scaler, pca, model, f.select_camera('corredor')))
         p_corredor.start()
+        current_pid[0] = p_corredor.pid
         print(str(p_corredor.pid))
         os.environ['CAM_PID'] = str(p_corredor.pid)
         #p_corredor.join()
@@ -164,8 +169,9 @@ def runner():
             p_escalas.join()
 
             #f.release_cam(f.get_cam(f.select_camera('escalas')))'''
-        p_corporativo = Process(target= run_cycle, args=(scaler, pca, model, f.select_camera('corporativo')))
+        p_corporativo = Process(target=run_cycle, args=(scaler, pca, model, f.select_camera('corporativo')))
         p_corporativo.start()
+        current_pid[0] = p_corporativo.pid
         print(str(p_corporativo.pid))
         os.environ['CAM_PID'] = str(p_corporativo.pid)
         #p_corporativo.join()
@@ -185,6 +191,7 @@ def runner():
             #f.release_cam(f.get_cam(f.select_camera('corredor')))'''
         p_escalas = Process(target= run_cycle, args=(scaler, pca, model, f.select_camera('escalas')))
         p_escalas.start()
+        current_pid[0] = p_escalas.pid
         print(str(p_escalas.pid))
         os.environ['CAM_PID'] = str(p_escalas.pid)
         #p_escalas.join()

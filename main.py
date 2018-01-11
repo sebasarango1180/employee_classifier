@@ -34,11 +34,8 @@ cascade = "haarcascade_frontalface_alt.xml"
 cropping_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Cropped/"
 original = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Original/"
 validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
-
-
 camera = cv2.VideoCapture(cam)
 face = cv2.CascadeClassifier(cascade_path + cascade)
-
 settings = {
     'scaleFactor': 1.5,
     'minNeighbors': 3,
@@ -93,14 +90,20 @@ def send_src(path):
 @app.route('/train', methods=['POST'])
 def trainer():
 
-    if os.environ.get('CAM_PID') is not None:
+    if psutil.pid_exists(current_pid[0]):
+        print "Matando a " + str(current_pid[0])
+        psutil.Process(current_pid[0]).kill()
+    '''if os.environ.get('CAM_PID') is not None:
         pid = os.environ.get('CAM_PID')
         sntnc = "kill -9 " + pid
-        os.system(sntnc)
+        os.system(sntnc)'''
     model_opt = request.get_data()
     model_opt = model_opt.split("&")[0].split('=')[-1]  # Get the real option from the form.
     print(model_opt)
-    f.train_system(model_opt)
+    p_train = Process(target=f.train_system, args=(model_opt,))
+    p_train.start()
+    current_pid[0] = p_train.pid
+    #f.train_system(model_opt)
     return '', 204
 
 
@@ -111,13 +114,11 @@ def runner():
         p_corporativo.terminate()
         os.system("kill -9 " + str(p_corporativo.pid))
         p_corporativo.join()
-
         #f.release_cam(f.get_cam(f.select_camera('corporativo')))
     if p_escalas.is_alive():
         p_escalas.terminate()
         os.system("kill -9 " + str(p_escalas.pid))
         p_escalas.join()
-
     if p_corredor.is_alive():
         p_corredor.terminate()
         os.system("kill -9 " + str(p_corredor.pid))
@@ -140,13 +141,11 @@ def runner():
             p_corporativo.terminate()
             os.system("kill -9 " + str(p_corporativo.pid))
             p_corporativo.join()
-
             #f.release_cam(f.get_cam(f.select_camera('corporativo')))
         if p_escalas.is_alive():
             p_escalas.terminate()
             os.system("kill -9 " + str(p_escalas.pid))
             p_escalas.join()
-
             #f.release_cam(f.get_cam(f.select_camera('escalas')))'''
 
         p_corredor = Process(target=run_cycle, args=(scaler, pca, model, f.select_camera('corredor')))
@@ -161,13 +160,11 @@ def runner():
             p_corredor.terminate()
             os.system("kill -9 " + str(p_corredor.pid))
             p_corredor.join()
-
             #f.release_cam(f.get_cam(f.select_camera('corredor')))
         if p_escalas.is_alive():
             p_escalas.terminate()
             os.system("kill -9 " + str(p_escalas.pid))
             p_escalas.join()
-
             #f.release_cam(f.get_cam(f.select_camera('escalas')))'''
         p_corporativo = Process(target=run_cycle, args=(scaler, pca, model, f.select_camera('corporativo')))
         p_corporativo.start()
@@ -181,13 +178,11 @@ def runner():
             p_corporativo.terminate()
             os.system("kill -9 " + str(p_corporativo.pid))
             p_corporativo.join()
-
             #f.release_cam(f.get_cam(f.select_camera('corporativo')))
         if p_corredor.is_alive():
             p_corredor.terminate()
             os.system("kill -9 " + str(p_corredor.pid))
             p_corredor.join()
-
             #f.release_cam(f.get_cam(f.select_camera('corredor')))'''
         p_escalas = Process(target= run_cycle, args=(scaler, pca, model, f.select_camera('escalas')))
         p_escalas.start()

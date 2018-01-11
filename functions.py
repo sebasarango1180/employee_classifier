@@ -305,24 +305,24 @@ def run_system(scaler, pca, model, camera):  # Pass models as arguments.
                 #print("Dimensiones de PCA a entrada:")
                 #print(np.shape(imgn_pca))
                 y_new = model.predict(imgn_pca)
-                #print("Clasificacion a entrante:")
-                #print(y_new)
+                print("Clasificacion a entrante:")
+                print(y_new)
 
                 del imgn
 
                 if y_new[0] == 1:
                     color_rect = (0, 255, 0)
                 else:
-                    color_rect = (255, 0, 0)
+                    color_rect = (0, 255, 0)
                 del y_new
                 cv2.rectangle(img, (x, y), (x + w, y + h), color_rect, 2)
 
             n += 1
 
     else:
-        #print('No faces found')
-        pass
-
+        print('No faces found')
+        #pass
+    img = cv2.resize(img, (600, 400))
     cv2.imwrite("./sources/cam.png", img)
     return img
 

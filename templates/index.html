@@ -60,7 +60,7 @@
 </script>-->
 
 </head>
-<body onload="JavaScript:timedRefresh(50);">
+<body onload="JavaScript:timedRefresh(100);">
 <!--<body>-->
     <canvas id="liveImg" width="600" height="400"></canvas>
     <!--<img id="liveImg" src="" width="600" height="400">-->
@@ -70,7 +70,7 @@
             <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
             <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
             <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
-            <input type="submit" onclick="show_frames()" name="run" value="Cambiar">
+            <input type="submit" id="sub" onclick="show_cam()" name="run" value="Cambiar">
         </fieldset>
     </form>
     <form action="train" method="post">

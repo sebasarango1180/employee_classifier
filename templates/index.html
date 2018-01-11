@@ -16,7 +16,7 @@
 
     <!--<script type="text/javascript" src='./js/socket.io.js'></script>-->
     <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>-->
-    <script type="text/javascript" src='./js/pictures.js'></script>
+
     <!--<script type="text/javascript" src='./js/receiver.js'></script>-->
 
     <!--<script type="text/javascript" charset="utf-8">
@@ -62,15 +62,15 @@
 </head>
 <body onload="JavaScript:timedRefresh(100);">
 <!--<body>-->
-    <canvas id="liveImg" width="600" height="400"></canvas>
-    <!--<img id="liveImg" src="" width="600" height="400">-->
+    <!--<canvas id="liveImg" width="600" height="400"></canvas>-->
+    <img id="liveImg" src="" width="600" height="400">
     <form action="run" method="post">
         <fieldset>
             <legend>Seleccionar camara</legend>
             <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
             <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
             <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
-            <input type="submit" id="sub" onclick="show_cam()" name="run" value="Cambiar">
+            <input type="submit" id="sub"  name="run" value="Cambiar">
         </fieldset>
     </form>
     <form action="train" method="post">
@@ -81,5 +81,7 @@
             <input type="submit" name="train" value="Entrenar">
         </fieldset>
     </form>
+
+<script type="text/javascript" src='./js/pictures.js'></script>
 </body>
 </html>

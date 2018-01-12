@@ -1,7 +1,6 @@
 import cv2
 from datetime import *
 import os
-import time
 import base64
 
 import numpy as np
@@ -10,7 +9,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.externals import joblib
@@ -27,13 +25,12 @@ K.set_image_dim_ordering('th')
 
 cascade_path = "/home/experimentality/openCV/opencv/data/haarcascades/"
 cascade = "haarcascade_frontalface_alt.xml"
-cropping_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Cropped/"
+cropping_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/cropped/"
 base_path = "/home/experimentality/Documents/Degree work/Software/employee_classifier/"
-original = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Original/"
-validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/Validation/"
+original = "/home/experimentality/Documents/Degree work/Software/employee_classifier/original/"
+validator = "/home/experimentality/Documents/Degree work/Software/employee_classifier/validation/"
 
 
-#camera = cv2.VideoCapture("rtsp://172.16.1.246:554/")
 face = cv2.CascadeClassifier(cascade_path + cascade)
 
 settings = {

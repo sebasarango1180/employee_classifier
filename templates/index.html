@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" >
     <title>@PC | Employees monitoring system</title>
-
+    <link href="./css/style.css" rel="stylesheet" type="text/css" >
     <!--<script type="text/javascript" src='./js/socket.io.js'></script>-->
     <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>-->
 
@@ -11,27 +11,53 @@
 
 
 </head>
-<body onload="JavaScript:timedRefresh(50);">
+<body onload="JavaScript:timedRefresh(100);">
 <!--<body>-->
     <!--<canvas id="liveImg" width="600" height="400"></canvas>-->
+<div class="title-service">
+    <h1> Employes Monitoring System </h1>
+    <h3> Web Service </h3>
+
+</div>
+<div class="slide-left">
     <img id="liveImg" src="" width="600" height="400">
-    <form action="run" method="post">
-        <fieldset>
-            <legend>Seleccionar camara</legend>
-            <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
-            <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
-            <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
-            <input type="submit" id="sub"  name="run" value="Cambiar">
-        </fieldset>
-    </form>
-    <form action="train" method="post">
-        <fieldset>
-            <legend>Modelo de entrenamiento</legend>
-            <input type="radio" name="model" id="cnn_radio" value="cnn" checked="false" /><label for="cnn_radio">CNN</label><br />
-            <input type="radio" name="model" id="mlp_radio" value="mlp"  checked="false" /><label for="mlp_radio">MultiLayer Perceptron</label><br />
-            <input type="submit" name="train" value="Entrenar">
-        </fieldset>
-    </form>
+</div>
+   <div class="slide-right">
+       <form action="run" method="post">
+
+           <legend>Seleccionar camara</legend>
+           <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
+           <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
+           <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
+           <input type="submit" id="sub"  name="run" value="Cambiar">
+
+       </form>
+       <form action="train" method="post">
+
+           <legend>Modelo de entrenamiento</legend>
+           <input type="radio" name="model" id="cnn_radio" value="cnn" checked="false" /><label for="cnn_radio">CNN</label><br />
+           <input type="radio" name="model" id="mlp_radio" value="mlp"  checked="false" /><label for="mlp_radio">MultiLayer Perceptron</label><br />
+           <input type="submit" name="train" value="Entrenar">
+
+       </form>
+
+   </div>
+<br>
+<div class="info-col-left">
+    <h2> Manual de Usuario </h2>
+    <p> Selecciona la camara y el modo de entrenamiento </p>
+</div>
+<div class="info-col">
+    <h2> Información del Proyecto </h2>
+    <p> Desarrollado en Pyton etc... </p>
+
+</div>
+<footer>
+
+    By <span>Sebastian Arango</span>
+
+</footer>
+
 
 <script type="text/javascript" src='./js/pictures.js'></script>
 </body>

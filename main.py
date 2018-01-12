@@ -17,7 +17,7 @@ app = Flask(__name__, static_url_path='')
 socketio = SocketIO(app, async_mode="gevent_uwsgi")
 
 print "System ON"
-os.system("cp ./sources/logoapc-150x150.png ./sources/cam.png")
+os.system("cp ./sources/logoapc-150x150.jpg ./sources/cam.jpg")
 
 model_opt = 'mlp'
 (scaler, pca, model) = f.get_models(model_opt)
@@ -54,6 +54,11 @@ def home():
 @app.route('/js/<path:path>')  # To include static files.
 def send_js(path):
     return send_from_directory('js', path)
+
+
+@app.route('/css/<path:path>')  # To include static files.
+def send_style(path):
+    return send_from_directory('css', path)
 
 
 @app.route('/sources/<path:path>')  # To include static files.

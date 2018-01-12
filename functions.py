@@ -225,10 +225,10 @@ def get_models(model_opt):
     return scaler, pca, model
 
 
-def set_image_to_send(pic):
+'''def set_image_to_send(pic):
     pic = cv2.imencode('.png', pic)[1].tostring()
     pic = base64.b64encode(pic)
-    return pic
+    return pic'''
 
 
 def run_system(scaler, pca, model, camera):  # Pass models as arguments.
@@ -276,7 +276,7 @@ def run_system(scaler, pca, model, camera):  # Pass models as arguments.
         print('No faces found')
         #pass
     img = cv2.resize(img, (600, 400))
-    cv2.imwrite("./sources/cam.png", img)
+    cv2.imwrite("./sources/cam.jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), 60])
     return img
 
 

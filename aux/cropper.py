@@ -39,7 +39,7 @@ def crop_face(face, box, n):
     #cropped = cv2.cvtColor(cropped,cv2.COLOR_BGR2HSV) #Convierto a HSV
     cropped = cv2.resize(cropped, (120, 120))
 
-    crop_name = cropping_path + '.' + datetime.now().isoformat() + "_face_" + str(n) + ".png"
+    crop_name = cropping_path + datetime.now().isoformat() + "_face_" + str(n) + ".png"
     cv2.imwrite(crop_name, cropped)
 
 

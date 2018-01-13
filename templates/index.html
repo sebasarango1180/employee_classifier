@@ -15,8 +15,8 @@
 <!--<body>-->
     <!--<canvas id="liveImg" width="600" height="400"></canvas>-->
 <div class="title-service">
-    <h1> Employes Monitoring System </h1>
-    <h3> Web Service </h3>
+    <h1> Monitoreo de  personal en instalaciones </h1>
+    <h3> Grupo @PC </h3>
 
 </div>
 <div class="slide-left">
@@ -25,7 +25,7 @@
    <div class="slide-right">
        <form action="run" method="post">
 
-           <legend>Seleccionar camara</legend>
+           <legend>Seleccionar cámara</legend>
            <input type="radio" name="cam" id="corredor" value="corredor" checked="false" /><label for="corredor">Corredor</label><br />
            <input type="radio" name="cam" id="corporativo" value="corporativo"  checked="false" /><label for="corporativo">Corporativo</label><br />
            <input type="radio" name="cam" id="escalas" value="escalas"  checked="false" /><label for="escalas">Escalas</label><br />
@@ -36,7 +36,7 @@
 
            <legend>Modelo de entrenamiento</legend>
            <input type="radio" name="model" id="cnn_radio" value="cnn" checked="false" /><label for="cnn_radio">CNN</label><br />
-           <input type="radio" name="model" id="mlp_radio" value="mlp"  checked="false" /><label for="mlp_radio">MultiLayer Perceptron</label><br />
+           <input type="radio" name="model" id="mlp_radio" value="mlp"  checked="false" /><label for="mlp_radio">Multi-layer Perceptron</label><br />
            <input type="submit" name="train" value="Entrenar">
 
        </form>
@@ -45,16 +45,22 @@
 <br>
 <div class="info-col-left">
     <h2> Manual de Usuario </h2>
-    <p> Selecciona la camara y el modo de entrenamiento </p>
+    <p>
+            - Seleccione la cámara.<br>
+            - Oprima el botón "Cambiar".<br>
+            - Si desea re-entrenar el sistema, escoja el modelo y presione el botón.
+    </p>
 </div>
 <div class="info-col">
     <h2> Información del Proyecto </h2>
-    <p> Desarrollado en Pyton etc... </p>
+    <p> Sistema para monitoreo de personal permitido en las instalaciones del Grupo @PC, mediante clasificación facial.<br>
+    - Despliegue web basado en Python + HTML5/JS/CSS.<br>
+    - AI basada en Python + OpenCV + Keras/Theano.</p>
 
 </div>
 <footer>
 
-    By <span>Sebastian Arango</span>
+    <span>Made with ♥ </span>By <span>Sebastián Arango </span> for <span>Experimentality</span>
 
 </footer>
 

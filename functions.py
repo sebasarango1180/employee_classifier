@@ -1,7 +1,7 @@
 import cv2
 from datetime import *
 import os
-import base64
+#import base64
 
 import numpy as np
 from sklearn import preprocessing
@@ -275,8 +275,10 @@ def run_system(scaler, pca, model, camera):  # Pass models as arguments.
     else:
         print('No faces found')
         #pass
+    # cv2.imwrite('./sources/' + datetime.now().isoformat() + '.png', img)
     img = cv2.resize(img, (600, 400))
     cv2.imwrite("./sources/cam.jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), 60])
+
     return img
 
 

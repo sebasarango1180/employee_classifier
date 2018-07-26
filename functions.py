@@ -17,7 +17,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import Flatten
-from keras.layers.convolutional import Conv2D
+from keras.layers.convolutional import Conv2D, Conv1D
 from keras.layers.convolutional import MaxPooling2D
 from keras import backend as K
 K.set_image_dim_ordering('th')
@@ -122,6 +122,7 @@ def feature_extract(trainData, testData, comps):
 
     pca = PCA(n_components=comps)
     pca.fit(trainData)
+    print()
     trainData_pca = pca.transform(trainData)
     testData_pca = pca.transform(testData)
 
@@ -191,7 +192,7 @@ def cnn_model(trainData_pca, trainLabels, testData_pca, testLabels):
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     # Fit the model
-    model.fit(trainData_pca, trainLabels, validation_data=(testData_pca, testLabels), epochs=4, batch_size=200)
+    model.fit(trainData_pca, trainLabels, validation_data=(testData_pca, testLabels), epochs=10, batch_size=200)
     # Final evaluation of the model
     scores = model.evaluate(testData_pca, testLabels, verbose=0)
     print("CNN Error: %.2f%%" % (100-scores[1]*100))

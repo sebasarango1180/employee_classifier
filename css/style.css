@@ -1,0 +1,46 @@
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-rendering: optimizespeed;
+}
+body{
+
+  font-family: 'arial', 'lato';
+  text-align: center;
+}
+
+#liveImg {
+
+  border-radius: 8px;
+  padding: 8px;
+}
+.title-service{
+
+  background-color: #3463ed;
+  margin: 0 0 43px 0;
+  color: #fff;
+  padding: 27px;
+  box-shadow: 0px 0px 11px #000;
+}
+form{width: 78%;display: inline-block;padding: 37px 13px 17px 13px;margin: 14px 0;text-align: left;position: relative;/*! box-shadow: 2px 2px 3px #d4d4d4; */color: #000;}
+form legend{/*! background-color: #1f56f6; */position: absolute;top: 0;width: 100%;margin: 0 0 0 -13px;border-top-left-radius: 4px;border-top-right-radius: 4px;padding: 6px 0 6px 14px;color: #757575;font-weight: bold;font-size: 1.2em;}
+form input[type=radio]{margin: 4px 0 0 0;}
+form input[type=submit]{border: 1px solid #e1e1e1;background-color: #fff;padding: 7px;border-radius: 6px;cursor: pointer;border-right: 2px solid #4343;border-bottom: 2px solid #4343;color: #666565;margin: 20px 0 0 0;}
+form input[type=submit]:hover{background-color: #e1e1e1;border-right: 1px solid #7e7e7e33;border-bottom: 1px solid #7e7e7e33;}
+form label{margin: 0 0 0 9px;color: #848484;text-shadow: 1px 1px 0px #ececec;}
+.slide-left{border: 1px solid #ddd;border-radius: 5px;border-right: none;}
+.slide-right{border: 1px solid #ddd;height: 405px;border-bottom-right-radius: 50%;border-top-right-radius: 50%;text-align: left;margin: 1px 0 0 -7px;padding: 4px 0 0 0;box-shadow: 14px 0px 5px -11px #c2c2c2;}
+
+.info-col-left {width: 49%;display: inline-block;padding: 34px 0 0 0;margin: 23px 0 0 0;min-height: 243px;color: #6f6f6f;}
+.info-col-left h2{text-align: right;padding: 0 37px 18px 0;color: #949ba7;}
+.info-col-left p{text-align: right;padding: 0 37px 18px 0;}
+
+.info-col{width: 49%;display: inline-block;padding: 34px 0 0 0;margin: 23px 0 0 0;min-height: 243px;color: #6f6f6f;text-align: center;}
+.info-col h2{text-align: left;padding: 0 0 18px 37px;color: #949ba7;}
+.info-col p{text-align: left;padding: 0 0 0 37px;}
+.info-col:last-of-type{border-left: 1px solid #eee;}
+.slide-left, .slide-right{display: inline-block;vertical-align: middle;background-color: #f8f8f8;}
+footer{background-color: #eaeaea;width: 100%;padding: 19px;color: #9e9e9e;text-align: right;margin: 65px 0 0 0;}
+footer span{font-size: 1.9em;text-shadow: 1px -2px 2px #bababa;}

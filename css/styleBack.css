@@ -1,0 +1,45 @@
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-rendering: optimizespeed;
+}
+body{
+  
+  font-family: 'arial', 'lato';
+  text-align: center;
+}
+
+#liveImg {
+  
+  border-radius: 8px;
+  padding: 8px;
+}
+.title-service{
+  
+  background-color: #3463ed;
+  margin: 0 0 43px 0;
+  color: #fff;
+  padding: 27px;
+  box-shadow: 0px 0px 11px #000;
+}
+form{width: 100%;display: inline-block;border-radius: 6px;border: 1px solid #e0e0e0;padding: 47px 13px 44px 13px;margin: 5px 0;text-align: left;position: relative;box-shadow: 2px 2px 3px #d4d4d4;}
+form legend{background-color: #1f56f6;position: absolute;top: 0;width: 100%;margin: 0 0 0 -13px;border-top-left-radius: 4px;border-top-right-radius: 4px;padding: 6px 0 6px 14px;color: #fff;font-weight: bold;}
+form input[type=submit]{border: 1px solid #e1e1e1;background-color: transparent;padding: 7px;position: absolute;right: 9px;bottom: 6px;border-radius: 6px;cursor: pointer;border-right: 2px solid #4343;border-bottom: 2px solid #4343;color: #666565;}
+form input[type=submit]:hover{background-color: #e1e1e1;border-right: 1px solid #7e7e7e33;border-bottom: 1px solid #7e7e7e33;}
+form label{margin: 0 0 0 9px;color: #959393;text-shadow: 1px 1px 0px #ececec;}
+.slide-left{border: 1px solid #ddd;border-radius: 5px;box-shadow: 2px 2px 3px #d4d4d4;}
+.slide-right{}
+
+.info-col-left {width: 49%;display: inline-block;padding: 34px 0 0 0;margin: 23px 0 0 0;min-height: 243px;color: #6f6f6f;}
+.info-col-left h2{text-align: right;padding: 0 37px 18px 0;color: #949ba7;}
+.info-col-left p{text-align: right;padding: 0 37px 18px 0;}
+
+.info-col{width: 49%;display: inline-block;padding: 34px 0 0 0;margin: 23px 0 0 0;min-height: 243px;color: #6f6f6f;text-align: center;}
+.info-col h2{text-align: left;padding: 0 0 18px 37px;color: #949ba7;}
+.info-col p{text-align: left;padding: 0 0 0 37px;}
+.info-col:last-of-type{border-left: 1px solid #eee;}
+.slide-left, .slide-right{display: inline-block;vertical-align: middle;margin: 0 7px;}
+footer{position: absolute;bottom: 0;background-color: #eaeaea;width: 100%;padding: 19px;color: #9e9e9e;text-align: right;}
+footer span{font-size: 1.9em;text-shadow: 1px -2px 2px #bababa;}

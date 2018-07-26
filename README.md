@@ -1,1 +1,1 @@
-# Verificador de acceso a empleados - @PC Mayorista
+# Verificador de acceso a empleados: V0.1.0
